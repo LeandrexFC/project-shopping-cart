@@ -1,6 +1,5 @@
 // Esse tipo de comentário que estão antes de todas as funções são chamados de JSdoc,
 // experimente passar o mouse sobre o nome das funções e verá que elas possuem descrições! 
-
 // Fique a vontade para modificar o código já escrito e criar suas próprias funções!
 
 /**
@@ -11,7 +10,7 @@
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
-  img.src = imageSource; 
+  img.src = imageSource;
   return img;
 };
 
@@ -37,6 +36,7 @@ const createCustomElement = (element, className, innerText) => {
  * @param {string} product.thumbnail - URL da imagem do produto.
  * @returns {Element} Elemento de produto.
  */
+
 const createProductItemElement = ({ id, title, thumbnail }) => {
   const section = document.createElement('section');
   section.className = 'item';
@@ -72,4 +72,25 @@ const createCartItemElement = ({ id, title, price }) => {
   return li;
 };
 
-window.onload = () => { };
+if (typeof module !== 'undefined') {
+  module.exports = {
+    createProductItemElement,
+  };
+}
+
+const showProducts = (products) => {
+  const items = document.querySelector('.items');
+  products.forEach((elements) => {
+    const resultsSection = createProductItemElement(elements);
+    items.appendChild(resultsSection);
+  });
+};
+
+const renderApi = async () => {
+  const products = await fetchProducts();
+  showProducts(products.results);
+};
+
+window.onload = () => { 
+      renderApi();
+};
