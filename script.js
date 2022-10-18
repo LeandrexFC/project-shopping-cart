@@ -1,6 +1,7 @@
 // Esse tipo de comentário que estão antes de todas as funções são chamados de JSdoc,
 // experimente passar o mouse sobre o nome das funções e verá que elas possuem descrições! 
 // Fique a vontade para modificar o código já escrito e criar suas próprias funções!
+
 /**
  * Função responsável por criar e retornar o elemento de imagem do produto.
  * @param {string} imageSource - URL da imagem.
@@ -53,7 +54,6 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
  * @param {Element} product - Elemento do produto.
  * @returns {string} ID do produto.
  */
-const getIdFromProductItem = (product) => product.querySelector('span.id').innerText;
 
 /**
  * Função responsável por criar e retornar um item do carrinho.
@@ -63,19 +63,39 @@ const getIdFromProductItem = (product) => product.querySelector('span.id').inner
  * @param {string} product.price - Preço do produto.
  * @returns {Element} Elemento de um item do carrinho.
  */
+
+const cartItemClickListener = (id) => {
+  console.log(id);
+};
+
 const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  li.addEventListener('click', cartItemClickListener);
+  li.addEventListener('click', () => cartItemClickListener());
   return li;
 };
 
-if (typeof module !== 'undefined') {
-  module.exports = {
-    createProductItemElement,
+const productAddList = (product) => {
+  const productList = document.querySelector('.cart__items');
+    const cartProduct = createCartItemElement(product);
+    productList.appendChild(cartProduct);
   };
-}
+
+const buttonTarget = async (event) => {
+  const alvo = event.target;
+  console.log(event);
+  const paiDoAlvo = alvo.parentNode;
+  const filhodoAlvo = paiDoAlvo.firstChild;
+  const results = await fetchItem(filhodoAlvo.innerText);
+  console.log(results);
+  productAddList(results);
+};
+
+const request = () => {
+  const button = document.querySelectorAll('.item__add');
+   button.forEach((elements) => elements.addEventListener('click', buttonTarget));
+};
 
 const showProducts = (products) => {
   const items = document.querySelector('.items');
@@ -86,10 +106,11 @@ const showProducts = (products) => {
 };
 
 const renderApi = async () => {
-  const products = await fetchProducts();
+  const products = await fetchProducts('computador');
   showProducts(products.results);
 };
 
-window.onload = () => { 
-      renderApi();
+window.onload = async () => { 
+  await renderApi();
+  request();
 };
