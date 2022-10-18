@@ -64,15 +64,16 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
  * @returns {Element} Elemento de um item do carrinho.
  */
 
-const cartItemClickListener = (id) => {
-  console.log(id);
+const cartItemClickListener = (event) => {
+  const listTarget = event.target;
+  listTarget.remove();
 };
 
 const createCartItemElement = ({ id, title, price }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `ID: ${id} | TITLE: ${title} | PRICE: $${price}`;
-  li.addEventListener('click', () => cartItemClickListener());
+  li.addEventListener('click', cartItemClickListener);
   return li;
 };
 
@@ -84,15 +85,23 @@ const productAddList = (product) => {
 
 const buttonTarget = async (event) => {
   const alvo = event.target;
-  console.log(event);
   const paiDoAlvo = alvo.parentNode;
   const filhodoAlvo = paiDoAlvo.firstChild;
   const results = await fetchItem(filhodoAlvo.innerText);
-  console.log(results);
   productAddList(results);
 };
 
-const request = () => {
+const removeCartProducts = () => {
+  const itemsPurshased = document.querySelector('.cart__items');
+  itemsPurshased.innerText = '';
+};
+
+const emptyButton = () => {
+  const classButton = document.querySelector('.empty-cart');
+  classButton.addEventListener('click', removeCartProducts);
+};
+
+const setupHTML = () => {
   const button = document.querySelectorAll('.item__add');
    button.forEach((elements) => elements.addEventListener('click', buttonTarget));
 };
@@ -112,5 +121,6 @@ const renderApi = async () => {
 
 window.onload = async () => { 
   await renderApi();
-  request();
+  setupHTML();
+  emptyButton();
 };
