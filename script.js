@@ -117,7 +117,7 @@ const showProducts = (products) => {
 
 const showLoadingMessage = () => {
   const header = document.querySelector('.items');
-  const divMessage = document.createElement('div');
+  const divMessage = document.createElement('p');
   divMessage.className = 'loading';
   divMessage.innerText = 'carregando...';
   header.appendChild(divMessage);
@@ -130,14 +130,14 @@ const removeLoadingMessage = () => {
  };
 
 const renderApi = async () => {
-  showLoadingMessage();
+  await showLoadingMessage();
   const products = await fetchProducts('computador');
-  removeLoadingMessage();
+  await removeLoadingMessage();
   showProducts(products.results);
 };
 
-window.onload = async () => { 
-  await renderApi();
+window.onload = () => { 
+  renderApi();
   setupHTML();
   emptyButton();
 };
