@@ -88,6 +88,7 @@ const buttonTarget = async (event) => {
   const paiDoAlvo = alvo.parentNode;
   const filhodoAlvo = paiDoAlvo.firstChild;
   const results = await fetchItem(filhodoAlvo.innerText);
+  console.log(results);
   productAddList(results);
 };
 
@@ -114,8 +115,24 @@ const showProducts = (products) => {
   });
 };
 
+const showLoadingMessage = () => {
+  const header = document.querySelector('.items');
+  const divMessage = document.createElement('div');
+  divMessage.className = 'loading';
+  divMessage.innerText = 'carregando...';
+  header.appendChild(divMessage);
+};
+
+const removeLoadingMessage = () => {
+  const carregando = document.querySelector('.loading');
+  console.log(carregando);
+  carregando.innerHTML = '';
+ };
+
 const renderApi = async () => {
+  showLoadingMessage();
   const products = await fetchProducts('computador');
+  removeLoadingMessage();
   showProducts(products.results);
 };
 
