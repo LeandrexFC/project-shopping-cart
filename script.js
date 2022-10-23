@@ -7,6 +7,9 @@
  * @param {string} imageSource - URL da imagem.
  * @returns {Element} Elemento de imagem do produto.
  */
+
+const productList = document.querySelector('.cart__items');
+
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -67,6 +70,7 @@ const createProductItemElement = ({ id, title, thumbnail }) => {
 const cartItemClickListener = (event) => {
   const listTarget = event.target;
   listTarget.remove();
+  saveCartItems(productList.innerHTML);
 };
 
 const createCartItemElement = ({ id, title, price }) => {
@@ -78,23 +82,20 @@ const createCartItemElement = ({ id, title, price }) => {
 };
 
 const productAddList = (product) => {
-  const productList = document.querySelector('.cart__items');
-    const cartProduct = createCartItemElement(product);
-    productList.appendChild(cartProduct);
-  };
-
-const buttonTarget = async (event) => {
-  const alvo = event.target;
-  const paiDoAlvo = alvo.parentNode;
-  const filhodoAlvo = paiDoAlvo.firstChild;
-  const results = await fetchItem(filhodoAlvo.innerText);
-  console.log(results);
-  productAddList(results);
+  const cartProduct = createCartItemElement(product);
+  productList.appendChild(cartProduct);
+  saveCartItems(productList.innerHTML);
 };
 
 const removeCartProducts = () => {
-  const itemsPurshased = document.querySelector('.cart__items');
-  itemsPurshased.innerText = '';
+  productList.innerText = '';
+};
+
+const clearTarget = () => {
+  const child = productList.childNodes;
+  child.forEach((elements) => {
+    elements.addEventListener('click', cartItemClickListener);
+  });
 };
 
 const emptyButton = () => {
@@ -102,9 +103,25 @@ const emptyButton = () => {
   classButton.addEventListener('click', removeCartProducts);
 };
 
+const renderStorage = () => {
+  if (getSavedCartItems() !== null) {
+    const takeSavedItems = getSavedCartItems();
+    productList.innerHTML = takeSavedItems;
+    emptyButton();
+  }
+};
+
+const buttonTarget = async (event) => {
+  const alvo = event.target;
+  const paiDoAlvo = alvo.parentNode;
+  const filhodoAlvo = paiDoAlvo.firstChild;
+  const results = await fetchItem(filhodoAlvo.innerText);
+  productAddList(results);
+};
+
 const setupHTML = () => {
   const button = document.querySelectorAll('.item__add');
-   button.forEach((elements) => elements.addEventListener('click', buttonTarget));
+  button.forEach((elements) => elements.addEventListener('click', buttonTarget));
 };
 
 const showProducts = (products) => {
@@ -125,19 +142,21 @@ const showLoadingMessage = () => {
 
 const removeLoadingMessage = () => {
   const carregando = document.querySelector('.loading');
-  console.log(carregando);
   carregando.innerHTML = '';
- };
+  carregando.remove();
+};
 
 const renderApi = async () => {
-  await showLoadingMessage();
   const products = await fetchProducts('computador');
-  await removeLoadingMessage();
+  removeLoadingMessage();
   showProducts(products.results);
 };
 
-window.onload = () => { 
-  renderApi();
+window.onload = async () => {
+  showLoadingMessage();
+  await renderApi();
   setupHTML();
   emptyButton();
+  renderStorage();
+  clearTarget();
 };
