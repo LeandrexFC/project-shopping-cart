@@ -13,7 +13,8 @@ describe('2 - Teste a função fetchItem', () => {
   })
   it('Teste se fetch item retorna o endopoint correto', async () => {
     expect.assertions(1)
-    expect(await fetchItem("MLB1615760527")).toEqual('object');
+    const results = await fetchItem('MLB1615760527')
+    expect(results).toEqual(item);
   })
   it('Teste se fetch item é igual ao retorno de item', async () => {
     expect.assertions(1)
